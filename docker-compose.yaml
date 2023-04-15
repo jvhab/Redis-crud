@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  app:
+    container_name: microservice
+    build: .
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - fullstack
+
+  redis:
+    image: redis
+    container_name: redis_user
+    volumes:
+      - ./redis-data:/bitnami/redis/data
+    ports:
+      - "6379:6379"
+    networks:
+      - fullstack
+
+networks:
+  fullstack:
+    driver: bridge
