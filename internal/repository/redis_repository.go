@@ -2,9 +2,12 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/jvhab/Redis-crud/internal/model"
+	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
+	"time"
 )
 
 type Repository struct {
@@ -17,12 +20,32 @@ func NewRepository(redisClient *redis.Client) *Repository {
 	}
 }
 
-func (r *Repository) Create(ctx context.Context, news *model.News) (uuid.UUID, error) {
+func (r *Repository) Create(ctx context.Context, news *model.News) error {
+	id, err := uuid.NewUUID()
+	if err != nil {
+		return errors.Wrap(err, "Repository.Create.uuid.NewUUID")
+	}
+	news.Id = id
+	newsBytes, err := json.Marshal(news)
+	if err != nil {
+		return errors.Wrap(err, "Repository.Create.json.Marshal")
+	}
+	if err := r.redisClient.Set(ctx, id.String(), newsBytes, time.Second*3).Err(); err != nil {
+		return errors.Wrap(err, "Repository.Create.redis.Set")
+	}
 
-	return uuid.New(), nil
+	return nil
 }
 
 func (r *Repository) Update(ctx context.Context, news *model.News) error {
+	newBytes, err := json.Marshal(news)
+	if err != nil {
+		return errors.Wrap(err, "Repository.Update.json.Marshal")
+	}
+	if err := r.redisClient.Set(ctx, news.Id.String(), newBytes, time.Second*3).Err(); err != nil {
+		return errors.Wrap(err, "Repository.Update.redis.Set")
+	}
+
 	return nil
 }
 

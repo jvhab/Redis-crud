@@ -7,7 +7,7 @@ import (
 )
 
 type RedisRepository interface {
-	Create(context.Context, *model.News) (uuid.UUID, error)
+	Create(context.Context, *model.News) error
 	Update(context.Context, *model.News) error
 	Get(context.Context, uuid.UUID) (*model.News, error)
 	Delete(context.Context, uuid.UUID) error
