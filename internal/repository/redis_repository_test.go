@@ -36,8 +36,9 @@ func TestRedisRepository(t *testing.T) {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		}
-		_, err := repo.Create(context.Background(), testNews)
+		id, err := repo.Create(context.Background(), testNews)
 		assert.NoError(t, err)
+		assert.NotEqual(t, id, uuid.Nil)
 	})
 
 	t.Run("Test Update news", func(t *testing.T) {

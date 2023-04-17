@@ -17,7 +17,7 @@ func NewController(ctrl repository.RedisRepository) *Controller {
 	}
 }
 
-func (c *Controller) Create(ctx context.Context, news *model.News) error {
+func (c *Controller) Create(ctx context.Context, news *model.News) (uuid.UUID, error) {
 	return c.rep.Create(ctx, news)
 }
 

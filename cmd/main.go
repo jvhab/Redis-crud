@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/jvhab/Redis-crud/config"
+	"github.com/jvhab/Redis-crud/internal/server"
 	"log"
 )
 
@@ -13,5 +13,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("dont read config")
 	}
-	fmt.Println(cfg)
+	server.Run(cfg)
 }
