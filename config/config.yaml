@@ -7,3 +7,6 @@ redis_db:
   pool_timeout: 240
   password: ""
   db: 0
+
+server:
+  host: "127.0.0.1:8083"

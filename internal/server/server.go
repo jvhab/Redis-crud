@@ -7,6 +7,7 @@ import (
 	"github.com/jvhab/Redis-crud/internal/handler"
 	"github.com/jvhab/Redis-crud/internal/repository"
 	"github.com/jvhab/Redis-crud/pkg/redis"
+	"log"
 )
 
 func Run(cfg *config.Config) {
@@ -16,4 +17,9 @@ func Run(cfg *config.Config) {
 	router := gin.New()
 	hdl := handler.NewHandler(ctrl, router)
 	hdl.RegisterRouter()
+
+	err := router.Run(cfg.Server.Host)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -11,4 +11,7 @@ type Config struct {
 		Password       string `yaml:"password"`
 		DB             int    `yaml:"db"`
 	} `yaml:"redis_db"`
+	Server struct {
+		Host string `yaml:"host"`
+	} `yaml:"server"`
 }

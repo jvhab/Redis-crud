@@ -20,21 +20,19 @@ func NewHandler(ctr *controller.Controller, router *gin.Engine) *Handler {
 	}
 }
 
-func (h *Handler) RegisterRouter() {
-	h.router.POST("/create", h.CreateNews())
-}
-
 func (h *Handler) CreateNews() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		news := &model.News{}
 		err := json.NewDecoder(c.Request.Body).Decode(news)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, "")
+			return
 		}
 		id, err := h.ctr.Create(c.Request.Context(), news)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, "")
+			return
 		}
-		c.JSON(http.StatusOK, id.String())
+		c.JSON(http.StatusCreated, id.String())
 	}
 }

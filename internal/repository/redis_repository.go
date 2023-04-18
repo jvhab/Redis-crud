@@ -33,7 +33,6 @@ func (r *Repository) Create(ctx context.Context, news *model.News) (uuid.UUID, e
 	if err := r.redisClient.Set(ctx, id.String(), newsBytes, time.Second*3).Err(); err != nil {
 		return uuid.Nil, errors.Wrap(err, "Repository.Create.redis.Set")
 	}
-
 	return id, nil
 }
 
