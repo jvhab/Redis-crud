@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvhab/Redis-crud/internal/controller"
@@ -40,30 +41,62 @@ func (h *Handler) CreateNews() gin.HandlerFunc {
 
 func (h *Handler) UpdateNews() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var err error
 		news := &model.News{}
-		err := json.NewDecoder(c.Request.Body).Decode(news)
+		err = json.NewDecoder(c.Request.Body).Decode(news)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, "dont update")
+			c.JSON(http.StatusBadRequest, "dont update1")
 			return
 		}
 		id := c.Params.ByName("id")
-		news.Id, err = uuid.FromBytes([]byte(id))
+		fmt.Println(id)
+		news.Id, err = uuid.Parse(id)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, "dont update")
+			c.JSON(http.StatusBadRequest, "dont update2")
+			fmt.Println(err)
 			return
 		}
 		err = h.ctr.Update(c.Request.Context(), news)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, "dont update")
+			c.JSON(http.StatusBadRequest, "dont update3")
 			return
 		}
-		c.JSON(http.StatusOK, "Update")
+		c.JSON(http.StatusOK, "Update "+id)
 	}
 }
 
-/*
-Create(context.Context, *model.News) (uuid.UUID, error)
-Update(context.Context, *model.News) error
-Get(context.Context, uuid.UUID) (*model.News, error)
-Delete(context.Context, uuid.UUID) error
-*/
+func (h *Handler) GetNews() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idTemp := c.Params.ByName("id")
+		id, err := uuid.Parse(idTemp)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, "dont parse id")
+			return
+		}
+		fmt.Println(id)
+		result, err := h.ctr.Get(c.Request.Context(), id)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, "dont have id")
+			fmt.Println(err)
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	}
+}
+
+func (h *Handler) DeleteNews() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idTemp := c.Params.ByName("id")
+		id, err := uuid.Parse(idTemp)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, "dont parse id")
+			return
+		}
+		err = h.ctr.Delete(c.Request.Context(), id)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, "dont delete")
+			return
+		}
+		c.String(http.StatusOK, "delete "+idTemp)
+	}
+}
