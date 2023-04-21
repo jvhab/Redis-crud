@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvhab/Redis-crud/internal/controller"
@@ -49,11 +48,9 @@ func (h *Handler) UpdateNews() gin.HandlerFunc {
 			return
 		}
 		id := c.Params.ByName("id")
-		fmt.Println(id)
 		news.Id, err = uuid.Parse(id)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, "dont update2")
-			fmt.Println(err)
 			return
 		}
 		err = h.ctr.Update(c.Request.Context(), news)
@@ -73,11 +70,9 @@ func (h *Handler) GetNews() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, "dont parse id")
 			return
 		}
-		fmt.Println(id)
 		result, err := h.ctr.Get(c.Request.Context(), id)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, "dont have id")
-			fmt.Println(err)
 			return
 		}
 		c.JSON(http.StatusOK, result)
